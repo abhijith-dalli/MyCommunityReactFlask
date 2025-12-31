@@ -1,6 +1,5 @@
 import { useState,useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, Link } from "react-router-dom";
 function NavBar(){
     const navigate = useNavigate();
     const logout = () => {
@@ -32,9 +31,9 @@ function NavBar(){
                         <i className="fa fa-bolt"></i> Actions
                     </a>
                     <ul className="dropdown-menu dropdown-menu-end shadow">
-                        <li><a className="dropdown-item" href="#"><i className="fa fa-calendar"></i> Upload Event</a></li>
-                        <li><a className="dropdown-item" href="#"><i className="fa fa-star"></i> Upload Review</a></li>
-                        <li><a className="dropdown-item" href="#"><i className="fa fa-user"></i> Edit Profile</a></li>
+                        <li><Link className="dropdown-item" to="/events"><i className="fa fa-calendar"></i> Upload Event</Link></li>
+                        <li><Link className="dropdown-item" to=""><i className="fa fa-star"></i> Upload Review</Link></li>
+                        <li><Link className="dropdown-item" to=""><i className="fa fa-user"></i> Edit Profile</Link></li>
                     </ul>
                     </li>
 

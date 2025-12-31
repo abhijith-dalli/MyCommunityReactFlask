@@ -3,6 +3,7 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Home from "./components/Home";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Event from "./components/Features/addEvents";
 
 function App() {
   return (
@@ -18,6 +19,10 @@ function App() {
             </ProtectedRoute>
           }
         />
+         <Route path="/events" element={
+            <ProtectedRoute>
+              <Event />
+            </ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );
