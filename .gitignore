@@ -1,3 +1,4 @@
 .venv
 Backend/__pycache__
 Frontend/node_modules
+*.pyc

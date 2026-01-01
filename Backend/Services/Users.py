@@ -1,4 +1,4 @@
-import bcrypt 
+import bcrypt
 import psycopg2.extras
 
 class User():
@@ -7,15 +7,16 @@ class User():
     def getUserDetails(self,username):
         with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
             cur.execute("SELECT * FROM management.users where username=%s",(username,))
-            account = cur.fetchone()
+            account = cur.fetchall()
         return account
     def validateUser(self,username,password):
         # hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-        userDetain = self.getUserDetails(username)
-        if password == userDetain['password']:
-            return 'True'
+        userDetail = self.getUserDetails(username)
+        print('userdetils   ',userDetail)
+        if password == userDetail[0]['password']:
+            return userDetail[0]['id']
         else:
-            return 'False'
+            return 'Failed'
         
     def registerUser(self,username,password,flat,email,phone,apartment):
         with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:

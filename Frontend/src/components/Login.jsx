@@ -14,9 +14,10 @@ function Login() {
     })
     .then(res => res.text())
     .then(data => {
-      if(data === 'True'){
+      if(data != 'Failed'){
         setAck("")
         localStorage.setItem("username", username);
+        localStorage.setItem("user_id", data);
         localStorage.setItem("token", "demo-token");
         navigate("/home", { replace: true });
       } 

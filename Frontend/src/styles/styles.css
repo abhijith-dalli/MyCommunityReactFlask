@@ -276,13 +276,6 @@
 
 /* ADD EVENT FORM */
 
-/* =========================
-   RESET / BASE
-========================= */
-
-/* =========================
-   ROOT LAYOUT
-========================= */
 .layoutRoot {
   min-height: 100vh;
   display: grid;
@@ -296,8 +289,8 @@
 /* LEFT PANEL */
 .visualPane {
   background:
-    radial-gradient(circle at 20% 20%, rgba(143, 126, 205, 0.6), transparent 60%),
-    linear-gradient(160deg, #2e2176,#180f4a,#441e95, #552985);
+    radial-gradient(circle at 20% 20%, rgba(142, 77, 196, 0.6), transparent 60%),
+    linear-gradient(160deg, #2e2176,#180f4a,#441e95, #491e76);
   color: White;
   padding: 40px;
 }

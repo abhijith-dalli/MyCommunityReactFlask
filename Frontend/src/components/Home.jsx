@@ -18,7 +18,7 @@ function Home() {
                       alt="Community Event"
                       className="img-fluid w-100"
                   />
-                  <span class="badge bg-purple position-absolute top-0 end-0 m-3">
+                  <span className="badge bg-purple position-absolute top-0 end-0 m-3">
                       Upcoming
                   </span>
                   </div>
