@@ -26,8 +26,8 @@ function NavBar(){
                     <li className="nav-item"><a className="nav-link" href="#"><i className="fa fa-user-plus"></i> Visitor</a></li>
                     <li className="nav-item"><a className="nav-link" href="#"><i className="fa fa-users"></i> Visitors</a></li>
 
-                    <li className="nav-item dropdown">
-                    <a className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                    <li className="nav-item dropdown hover-dropdown">
+                    <a className="nav-link dropdown-toggle">
                         <i className="fa fa-bolt"></i> Actions
                     </a>
                     <ul className="dropdown-menu dropdown-menu-end shadow">

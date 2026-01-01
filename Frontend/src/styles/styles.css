@@ -121,6 +121,26 @@
     width: 100%;
   }
 
+
+  .hover-dropdown > .dropdown-menu {
+    
+    display: block;              
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-20px);
+    transition:
+      opacity 0.5s ease,
+      transform 0.5s ease,
+      visibility 0.5s ease;
+  }
+
+  .hover-dropdown:hover .dropdown-menu {
+    border-radius: 10px;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
   .badge {
     background-color: #ede9fe !important;
     color: #5b21b6 !important;
