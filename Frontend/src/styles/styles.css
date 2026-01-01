@@ -535,6 +535,14 @@
   cursor: pointer;
 }
 
+.primaryBtn:disabled, button[disabled] {
+  background-color: #cccccc; 
+  color: #320467;
+  cursor: not-allowed; 
+  opacity: 1; 
+}
+
+
 @keyframes slideLeft {
   from {
     opacity: 0;
@@ -655,12 +663,10 @@
   }
 }
 
-
 .imageUpload {
   position: relative;
 }
 
-/* Hide native input */
 .imageUpload input[type="file"] {
   position: absolute;
   inset: 0;
@@ -668,7 +674,6 @@
   pointer-events: none;
 }
 
-/* Upload box */
 .imageUploadBox {
   display: flex;
   align-items: center;
@@ -693,7 +698,6 @@
   box-shadow: 0 0 0 4px rgba(109,91,208,0.15);
 }
 
-/* Text */
 .imageUploadText {
   text-align: center;
 }
@@ -710,4 +714,109 @@
   margin-top: 6px;
   font-size: 0.8rem;
   color: #6b7280;
+}
+
+.editRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.editInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.editRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 140px;   /* prevents shifting */
+  justify-content: flex-end;
+}
+
+.eventDate {
+  font-size: 0.85rem;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.deleteIcon {
+  font-size: 0.95rem;
+  color: #9ca3af;
+  cursor: pointer;
+
+  transition:
+    color 0.15s ease,
+    transform 0.18s ease;
+}
+
+.deleteIcon:hover {
+  color: #dc2626;
+  transform: rotate(-12deg) translateY(-1px);
+}
+
+.backBtnSmall {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100px;     
+  padding: 6px 0;
+
+  border-radius: 999px;
+  background: #ffffff;
+  color: #374151;
+
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  overflow: hidden;
+
+  transition:
+    width 0.35s cubic-bezier(.4,0,.2,1),
+    box-shadow 0.25s ease,
+    transform 0.15s ease;
+}
+
+.backBtnSmall::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 20%,
+    rgba(99, 102, 241, 0.25),
+    transparent 80%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.backBtnSmall:hover {
+  width: 120px; 
+}
+
+.backBtnSmall:hover::before {
+  transform: translateX(100%);
+}
+
+.backBtnSmall:active {
+  transform: scale(0.95);
+  box-shadow:
+    0 4px 10px rgba(99, 102, 241, 0.25);
+}
+
+.backBtnSmall:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(99, 102, 241, 0.35);
+}
+
+.backbtn{
+  margin-top: 10px;
 }

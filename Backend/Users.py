@@ -1,4 +1,4 @@
-import bcrypt
+import bcrypt 
 import psycopg2.extras
 
 class User():
@@ -7,16 +7,15 @@ class User():
     def getUserDetails(self,username):
         with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
             cur.execute("SELECT * FROM management.users where username=%s",(username,))
-            account = cur.fetchall()
+            account = cur.fetchone()
         return account
     def validateUser(self,username,password):
         # hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-        userDetail = self.getUserDetails(username)
-        print('userdetils   ',userDetail)
-        if password == userDetail[0]['password']:
-            return userDetail[0]['id']
+        userDetain = self.getUserDetails(username)
+        if password == userDetain['password']:
+            return 'True'
         else:
-            return 'Failed'
+            return 'False'
         
     def registerUser(self,username,password,flat,email,phone,apartment):
         with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
@@ -40,19 +39,3 @@ class User():
             except (ValueError, TypeError) as e:
                 print("Error: ",e)
             return f'Registration successful for user {username}.'
-
-class Logs():
-
-    def __init__(self,connection):
-        self.connection = connection
-
-    def createLog(self,user_id,p_id,p_table,notes,action):
-        try:
-            with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
-                cur.execute(""" 
-                            INSERT INTO management.logs (user_id, primary_id, primary_table, note, action)
-                            VALUES (%s,%s,%s,%s,%s);
-                            """,(user_id,p_id,p_table,notes,action))
-            self.connection.commit()
-        except (ValueError, TypeError) as e:
-            print("Error: ",e)

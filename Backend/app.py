@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session,js
 from flask_sqlalchemy import SQLAlchemy
 import os,time,psycopg2.extras,re
 from flask_cors import CORS
-from Services.Users import User
+from Services.Users import User,Logs
 from Services.Features import Event
 
 app = Flask(__name__)
@@ -28,6 +28,9 @@ def userloginregistration():
         getUser = User(connection)
         isValid = getUser.validateUser(request.args.get("username"),request.args.get("password"))
         print(isValid)
+        logData = Logs(connection)
+        if isValid:
+            logData.createLog(isValid,-1,'','User Logged in','LoggedIn')
         return str(isValid)
     elif(request.method == 'POST'):
         getUser = User(connection)
@@ -45,7 +48,7 @@ def uploadFile():
     file.save(os.path.join("uploads", unique_name))
     return {"message": "Success","filename":unique_name}
 
-@app.route("/Event", methods=["GET","POST"])
+@app.route("/Event", methods=["GET","POST","PATCH"])
 def events():
     if request.method == 'POST':
         event = Event(connection,request.form.get('user_id'))
@@ -55,7 +58,24 @@ def events():
         event = Event(connection,request.args.get('user_id'))
         getEvents = event.getEvents()
         return getEvents
+    if request.method == 'PATCH':
+        event = Event(connection,request.form.get('user_id'))
+        updated = event.updateEvent(request.form)
+        if updated:
+            return event.getEvents()
+        else:
+            return 'Failed!'
     
+@app.route("/Event/<int:event_id>/<int:user_id>", methods=["DELETE"])
+def delete_event(event_id,user_id):
+    event = Event(connection,user_id)
+    detete_event = event.deleteEvent(event_id)
+    if detete_event == True:
+         user_events = event.getEvents()
+         return user_events
+    else:
+        return 'Failed!'
+   
 @app.route('/view_session')
 def view_session():
     return dict(session)

@@ -2,3 +2,4 @@
 Backend/__pycache__
 Frontend/node_modules
 *.pyc
+/Backend/uploads

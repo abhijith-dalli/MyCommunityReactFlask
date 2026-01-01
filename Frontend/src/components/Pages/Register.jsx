@@ -1,11 +1,10 @@
 import { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import '../styles/styles.css';
+import '../../styles/styles.css';
 
 function ErrorAck(props){
   return (<small id={props.id} className="text-danger">{props.message}</small>);
 }
-
 
 function Register() {
   const [register, setRegister] = useState({
