@@ -1,44 +1,64 @@
 import NavBar from "../Navbar";
+import {useEffect,useState} from "react"
 
+function EventCard({details}){
+  return(
+          <div className="card event-card w-100 overflow-hidden">
+            <div className="event-image position-relative">
+                <img src={"http://localhost:4000/uploads/" + details.image} alt={details.image} />
+              <span className="badge bg-purple position-absolute top-0 end-0 m-3">
+                {details.due}
+              </span>
+            </div>
+
+            <div className="card-body text-center">
+              <h5 className="fw-bold text-purple">{details.title}</h5>
+              <p className="text-muted">
+                {details.description}
+              </p>
+
+              <ul className="list-unstyled small mt-3">
+                <li><i className="fa fa-calendar text-purple"></i> {details.date} · {details.time}</li>
+                <li><i className="fa fa-user text-purple"></i> Organized by {details.organizer}</li>
+                <li><i className="fa fa-location-dot text-purple"></i> {details.location}</li>
+              </ul>
+            </div>
+          </div>
+        )
+  }
+
+  
 function Home() {
 
+  const [events,setEvents] = useState('')
+  useEffect(() => {
+    fetch("http://localhost:4000/Event?user_id=0",{
+        method: "GET",
+    })
+    .then(res=> res.json())
+    .then(data=>{
+      setEvents(data)
+    })
+  }, []);
+  
   return (
     <>
       <NavBar />
-      {/* EVENTS */}
       <div className="container mt-5">
           <h2 className="section-title">Upcoming Events</h2>
-          <div className="row justify-content-center">
-          <div className="col-md-4 d-flex justify-content-center">
-              <div className="card event-card w-100 overflow-hidden">
-                  <div className="event-image">
-                  <img 
-                      src="../media/event-placeholder.jpg" 
-                      alt="Community Event"
-                      className="img-fluid w-100"
-                  />
-                  <span className="badge bg-purple position-absolute top-0 end-0 m-3">
-                      Upcoming
-                  </span>
+          <div className="container">
+            <div className="row justify-content-center g-4">
+              {events.length > 0 ? (
+                events.map((event) => (
+                  <div key={event.id} className="col-md-4 col-sm-6 d-flex justify-content-center">
+                    <EventCard details={event}/> 
                   </div>
-
-                  {/* CONTENT */}
-                  <div className="card-body text-center">
-                  <h5 className="fw-bold text-purple">Community Meetup</h5>
-                  <p className="text-muted">
-                      Join your neighbours for a friendly community gathering.
-                  </p>
-
-                  <ul className="list-unstyled small mt-3">
-                      <li><i className="fa fa-calendar text-purple"></i> 20 Sep · 6:00 PM</li>
-                      <li><i className="fa fa-user text-purple"></i> Organized by Admin</li>
-                      <li><i className="fa fa-location-dot text-purple"></i> Club House</li>
-                  </ul>
-                  </div>
-
-              </div>
-          </div>
-          </div>
+                ))
+              ) : (
+                <p className="text-center text-muted">No events found</p>
+              )}
+            </div>
+          </div>   
       </div>
 
       {/* REVIEWS */}

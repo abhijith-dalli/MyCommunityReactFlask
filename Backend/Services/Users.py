@@ -17,7 +17,12 @@ class User():
             return userDetail[0]['id']
         else:
             return 'Failed'
-        
+
+    def getUserByID(self,user_id):
+        with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("SELECT * FROM management.users where id=%s",(user_id,))
+            userDetails = cur.fetchone()
+        return userDetails
     def registerUser(self,username,password,flat,email,phone,apartment):
         with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
             cur.execute("SELECT username FROM management.users where username=%s",(username,))
@@ -33,7 +38,7 @@ class User():
                                 INSERT INTO management.users (username, password, email, phone, type , flat, apt_id)
                                 VALUES (%s,%s,%s,%s,%s,%s,%s)
                                 returning id,username;
-                                """,(username,password,email,phone,'owner',flat,apartment))
+                                """,(username,password,email,phone,'Owner',flat,apartment))
                     username = cur.fetchone()['username']
                 self.connection.commit()
                 print('Details ',username)

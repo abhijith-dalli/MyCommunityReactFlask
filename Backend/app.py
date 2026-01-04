@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session,jsonify
+from flask import Flask, render_template, request, redirect, url_for, session,jsonify,send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 import os,time,psycopg2.extras,re
 from flask_cors import CORS
@@ -25,13 +25,18 @@ def root():
 @app.route("/User", methods=["GET","POST"])
 def userloginregistration():
     if(request.method == 'GET'):
-        getUser = User(connection)
-        isValid = getUser.validateUser(request.args.get("username"),request.args.get("password"))
-        print(isValid)
-        logData = Logs(connection)
-        if isValid:
-            logData.createLog(isValid,-1,'','User Logged in','LoggedIn')
-        return str(isValid)
+        if ('user_id' in request.args):
+            getUser = User(connection)
+            details = getUser.getUserByID(request.args.get("user_id"))
+            return details
+        elif ('username' in request.args and 'password' in request.args):
+            getUser = User(connection)
+            isValid = getUser.validateUser(request.args.get("username"),request.args.get("password"))
+            print(isValid)
+            logData = Logs(connection)
+            if isValid:
+                logData.createLog(isValid,-1,'','User Logged in','LoggedIn')
+            return str(isValid)
     elif(request.method == 'POST'):
         getUser = User(connection)
         register_user = getUser.registerUser(request.form.get('username'),request.form.get('password'),request.form.get('flat'),request.form.get('email'),request.form.get('phone'),request.form.get('apartment')) 
@@ -47,6 +52,10 @@ def uploadFile():
     unique_name = f"{name}_{int(time.time())}{ext}"
     file.save(os.path.join("uploads", unique_name))
     return {"message": "Success","filename":unique_name}
+
+@app.route("/uploads/<path:filename>")
+def getUpload(filename):
+    return send_from_directory(upload_path, filename)
 
 @app.route("/Event", methods=["GET","POST","PATCH"])
 def events():

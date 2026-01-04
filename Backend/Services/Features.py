@@ -4,7 +4,7 @@ from Services.Users import Logs
 class Event():
     def __init__(self,connection,user_id):
         self.connection = connection
-        self.user_id = user_id
+        self.user_id = int(user_id)
         self.logData = Logs(connection)
 
     def createEvent(self,eventDICT):
@@ -24,7 +24,24 @@ class Event():
         
     def getEvents(self):
         with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
-            cur.execute("SELECT id,title,organizer,date::text,time::text,location,description FROM management.events where user_id=%s",(self.user_id,))
+            if self.user_id != 0:
+                cur.execute("SELECT id,title,organizer,date::text,time::text,location,description FROM management.events where user_id=%s",(self.user_id,))
+            else:
+                cur.execute("""SELECT id,
+                            title,
+                            image,
+                            organizer,
+                            TO_CHAR(date, 'Day, Mon DD, YYYY') as date,
+                            TO_CHAR(time,'HH:MI  AM') as time, 
+                            case when 
+                                date = now()::date then 'Today'
+                                when (date) < now()::date then 'Completed'
+                                else 'Upcoming'
+                            end as due,
+                            location,
+                            description 
+                                FROM management.events
+                            order by time,date""")
             events = cur.fetchall()
         return events
     
