@@ -31,8 +31,8 @@ class Event():
                             title,
                             image,
                             organizer,
-                            TO_CHAR(date, 'Day, Mon DD, YYYY') as date,
-                            TO_CHAR(time,'HH:MI  AM') as time, 
+                            TO_CHAR(date, 'Day, Mon DD, YYYY') as datestr,
+                            TO_CHAR(time,'HH:MI  AM') as timestr, 
                             case when 
                                 date = now()::date then 'Today'
                                 when (date) < now()::date then 'Completed'
@@ -41,7 +41,7 @@ class Event():
                             location,
                             description 
                                 FROM management.events
-                            order by time,date""")
+                            order by date,time desc""")
             events = cur.fetchall()
         return events
     

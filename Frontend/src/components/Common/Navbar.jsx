@@ -33,18 +33,10 @@ function NavBar(){
                 <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
                 {user.id == 1 ? (
                     <ul className="navbar-nav align-items-center gap-4">
-                        <li className="nav-item"><a className="nav-link active" href="/admin/dashboard"><i className="fa fa-house"></i> Dashboards</a></li>
-                        <li className="nav-item dropdown hover-dropdown">
-                            <a className="nav-link dropdown-toggle">
-                                <i className="fa fa-bolt"></i> Actions
-                            </a>
-                            <ul className="dropdown-menu dropdown-menu-end shadow">
-                            <li><Link className="dropdown-item" to="/admin/users"><i className="fa fa-star"></i> Create Users </Link></li>
-                            <li><Link className="dropdown-item" to="/admin/buildings"><i className="fa fa-user"></i> Create Apartments </Link></li>
-                            </ul>
-                        </li>
-                        <li className="nav-item"><a className="nav-link active" href="/admin/issues"><i className="fa fa-house"></i> Issues</a></li>
-                        <li className="nav-item"><a className="nav-link active" href="/admin/logs"><i className="fa fa-house"></i> Audit logs</a></li>
+                        <li className="nav-item"><a className="nav-link active" href="/admin/dashboard"><i className="fa fa-bar-chart"></i> Dashboards</a></li>
+                        <li className="nav-item"><a className="nav-link active" href="/admin/manage"><i className="fa fa-cog"></i> Manage</a></li>
+                        <li className="nav-item"><a className="nav-link active" href="/admin/issues"><i className="fa fa-list"></i> Issues</a></li>
+                        <li className="nav-item"><a className="nav-link active" href="/admin/logs"><i className="fa fa-history"></i> Audit logs</a></li>
                         <li className="nav-item">
                         <button onClick={logout} className="btn btn-outline-light px-4">
                             <i className="fa fa-right-from-bracket"></i> Logout

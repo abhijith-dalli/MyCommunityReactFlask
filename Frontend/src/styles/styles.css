@@ -1,4 +1,4 @@
-/* General styling */
+
 
 .register-page {
   min-height: 100vh;
@@ -102,7 +102,7 @@
 
   .nav-link {
     font-weight: 500;
-    color: #ede9fe !important;
+    color: #ede9fe;
     position: relative;
   }
 
@@ -839,4 +839,281 @@
 
 .backbtn{
   margin-top: 10px;
+}
+
+
+
+
+/* admin panel */
+/* =====================================================
+   ADMIN PAGE – BABY PURPLE THEME (SCOPED)
+   ===================================================== */
+
+.admin-page {
+  /* THEME VARIABLES */
+  --purple-main: #7c3aed;
+  --purple-dark: #5b21b6;
+  --purple-soft: #f4f1ff;
+  --purple-light: #d6ccff;
+  --purple-accent: #0b0910;
+
+  --text-main: #2b0a6f;
+  --text-strong: #1e0b4b;
+  --text-muted: #4c1d95;
+
+  --white: #ffffff;
+
+  background: var(--purple-soft);
+  padding: 24px;
+  border-radius: 18px;
+  color: var(--text-main);
+
+  animation: pageEnter 0.45s ease;
+}
+
+/* =====================================================
+   TABS (VISIBLE + STRONG)
+   ===================================================== */
+
+.admin-page .admin-tabs {
+  border-bottom: none;
+  margin-bottom: 18px;
+}
+
+.admin-page .admin-tabs .nav-link {
+  background: white;
+  color: var(--text-strong);
+  font-weight: 700;
+  padding: 10px 22px;
+  margin-right: 8px;
+  border-radius: 14px 14px 0 0;
+  border: none;
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+.admin-page .admin-tabs .nav-link:hover {
+  background: var(--purple-light);
+  transform: translateY(-1px);
+}
+
+.admin-page .admin-tabs .nav-link.active {
+  background: linear-gradient(90deg, #421a88);
+  color: whitesmoke;
+  box-shadow: 0 -6px 16px rgba(124, 58, 237, 0.35);
+}
+
+/* underline animation */
+.admin-page .admin-tabs .nav-link::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  width: 0;
+  height: 3px;
+  background: var(--purple-main);
+  border-radius: 999px;
+  transform: translateX(-50%);
+  transition: width 0.25s ease;
+}
+
+.admin-page .admin-tabs .nav-link.active::after {
+  width: 50%;
+}
+
+.admin-page .admin-card {
+  background: var(--white);
+  border-radius: 20px;
+  border: 1px solid var(--purple-light);
+  box-shadow: 0 14px 28px rgba(124, 58, 237, 0.22);
+  animation: cardIn 0.4s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.admin-page .admin-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 38px rgba(124, 58, 237, 0.32);
+}
+
+/* =====================================================
+   CARD HEADER
+   ===================================================== */
+
+.admin-page .admin-header {
+  background: linear-gradient(90deg, #421a88, #470c6a);
+  color: #ffffff;
+  border-radius: 20px 20px 0 0;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  padding: 16px 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* soft shimmer animation */
+.admin-page .admin-header::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  animation: headerShimmer 10s infinite;
+}
+
+/* =====================================================
+   LABELS & TEXT
+   ===================================================== */
+
+.admin-page .form-label {
+  font-weight: 700;
+  color: var(--text-strong);
+  margin-bottom: 6px;
+}
+
+.admin-page .text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* =====================================================
+   INPUTS
+   ===================================================== */
+
+.admin-page .admin-input,
+.admin-page .admin-select {
+  border-radius: 14px;
+  padding: 12px 15px;
+  border: 2px solid var(--purple-light);
+  background: var(--white);
+  color: var(--text-strong);
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+.admin-page .admin-input:disabled{
+  background-color: lightgray;
+}
+
+.admin-page .admin-input::placeholder {
+  color: #6b5ca5;
+}
+
+.admin-page .admin-input:hover,
+.admin-page .admin-select:hover {
+  border-color: var(--purple-accent);
+}
+
+.admin-page .admin-input:focus,
+.admin-page .admin-select:focus {
+  border-color: var(--purple-main);
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.35);
+  transform: translateY(-1px);
+}
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+
+.admin-page .admin-btn {
+  border-radius: 999px;
+  padding: 10px 30px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  background: #421a88;
+  border: none;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s ease;
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.45);
+}
+
+/* shine sweep */
+.admin-page .admin-btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+  transition: left 0.4s ease;
+}
+
+.admin-page .admin-btn:hover::after {
+  left: 100%;
+}
+
+.admin-page .admin-btn:hover {
+  background: var(--purple-dark);
+  transform: translateY(-2px);
+}
+
+.admin-page .admin-btn:active {
+  transform: scale(0.96);
+}
+
+/* =====================================================
+   FLATS SECTION
+   ===================================================== */
+
+.admin-page .fade-slide {
+  margin-top: 16px;
+  padding: 18px;
+  background: #ede9fe;
+  border-radius: 18px;
+  animation: slideFade 0.35s ease;
+}
+
+/* =====================================================
+   ANIMATIONS
+   ===================================================== */
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes headerShimmer {
+  0% { left: -60%; }
+  50% { left: 120%; }
+  100% { left: 120%; }
 }

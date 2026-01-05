@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./components/Pages/Login";
-import Register from "./components/Pages/Register";
+import Login from "./components/Common/Login";
+import Register from "./components/Common/Register";
 import Home from "./components/Pages/Home";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./components/Common/ProtectedRoute";
 import Event from "./components/Pages/addEvents";
+import AdminManagement from "./components/Admin/AdminManagement";
 
 function App() {
   return (
@@ -23,6 +24,8 @@ function App() {
             <ProtectedRoute>
               <Event />
             </ProtectedRoute>} />
+          <Route path="/admin/manage" element={
+              <AdminManagement />} />
       </Routes>
     </BrowserRouter>
   );

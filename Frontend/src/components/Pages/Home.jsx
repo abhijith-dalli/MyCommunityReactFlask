@@ -1,4 +1,4 @@
-import NavBar from "../Navbar";
+import NavBar from "../Common/Navbar";
 import {useEffect,useState} from "react"
 
 function EventCard({details}){
@@ -18,7 +18,7 @@ function EventCard({details}){
               </p>
 
               <ul className="list-unstyled small mt-3">
-                <li><i className="fa fa-calendar text-purple"></i> {details.date} · {details.time}</li>
+                <li><i className="fa fa-calendar text-purple"></i> {details.datestr} · {details.timestr}</li>
                 <li><i className="fa fa-user text-purple"></i> Organized by {details.organizer}</li>
                 <li><i className="fa fa-location-dot text-purple"></i> {details.location}</li>
               </ul>
