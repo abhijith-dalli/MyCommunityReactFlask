@@ -16,10 +16,18 @@ function Login() {
     .then(data => {
       if(data != 'Failed'){
         setAck("")
-        localStorage.setItem("username", username);
-        localStorage.setItem("user_id", data);
-        localStorage.setItem("token", "demo-token");
-        navigate("/home", { replace: true });
+        var user_data = JSON.parse(data)
+        localStorage.setItem("username", user_data.username);
+        localStorage.setItem("user_id", user_data.id);
+        localStorage.setItem("role", user_data.type);
+        localStorage.setItem("token", 'demo-token');
+        // localStorage.setItem("token", user_data.token);
+        if(localStorage.getItem("user_id") == 1){
+          navigate("/admin", { replace: true });
+        }
+        else{
+          navigate("/home", { replace: true });
+        }
       } 
       else{
         setAck('Invalid credentials')

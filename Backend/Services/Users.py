@@ -13,8 +13,8 @@ class User():
         # hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
         userDetail = self.getUserDetails(username)
         print('userdetils   ',userDetail)
-        if password == userDetail[0]['password']:
-            return userDetail[0]['id']
+        if len(userDetail) and password == userDetail[0]['password']:
+            return userDetail[0]
         else:
             return 'Failed'
 

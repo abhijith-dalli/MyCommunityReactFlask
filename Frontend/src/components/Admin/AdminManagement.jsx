@@ -2,24 +2,12 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import NavBar from "../Common/Navbar";
 
-/* ---------------- ADMIN ROUTE GUARD ---------------- */
-function AdminRoute({ children }) {
-//   const role = localStorage.getItem("role"); 
 
-//   if (role !== "admin") {
-//     return <Navigate to="/unauthorized" replace />;
-//   }
-
-  return children;
-}
-
-/* ---------------- MAIN PAGE ---------------- */
 function AdminManagement() {
   const [activeTab, setActiveTab] = useState("user");
 
   const [apartments, setApartments] = useState([]);
 
-  /* -------- CREATE USER STATE -------- */
   const [user, setUser] = useState({
     username: "",
     email: "",
@@ -28,7 +16,6 @@ function AdminManagement() {
     apartment_id: ""
   });
 
-  /* -------- CREATE APARTMENT STATE -------- */
   const [apartment, setApartment] = useState({
     name: "",
     location: "",
@@ -80,10 +67,9 @@ function AdminManagement() {
   }
 
   return (
-    <AdminRoute>
+    <>
         <NavBar />
         <div className="container mt-4 admin-page">
-            {/* -------- TABS -------- */}
             <ul className="nav nav-tabs admin-tabs mb-4">
             <li className="nav-item">
                 <button
@@ -167,7 +153,7 @@ function AdminManagement() {
                         <option value="">Select Apartment</option>
                         {apartments.map(a => (
                         <option key={a.id} value={a.id}>
-                            {a.name}
+                            {a.name} {"("+a.loc+")"}
                         </option>
                         ))}
                     </select>
@@ -256,7 +242,7 @@ function AdminManagement() {
             )}
 
         </div>
-    </AdminRoute>
+    </>
   );
 }
 

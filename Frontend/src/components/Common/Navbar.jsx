@@ -6,24 +6,13 @@ function NavBar(){
         localStorage.removeItem("token");
         navigate("/", { replace: true });
     };
-    const [user , setUser] = useState('');
-    useEffect(() => {
-        fetch("http://localhost:4000/User?user_id="+localStorage.user_id,{
-            method: "GET",
-        })
-        .then(res=> res.json())
-        .then(data=>{
-        setUser(data)
-        })
-    }, []);
-
     return(
         <nav className="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
             <div className="container-fluid">
                 <div className="d-flex align-items-center gap-3">
                     <img src="../media/logo.jpg" width="55" height="45" className="rounded shadow"/>
                     <span className="navbar-brand text-uppercase">My Community</span>
-                    <span className="badge bg-light text-dark">{user.type}</span>
+                    <span className="badge bg-light text-dark">{localStorage.getItem('role')}</span>
                 </div>
 
                 <button className="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -31,7 +20,7 @@ function NavBar(){
                 </button>
 
                 <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
-                {user.id == 1 ? (
+                {localStorage.getItem('user_id') == 1 ? (
                     <ul className="navbar-nav align-items-center gap-4">
                         <li className="nav-item"><a className="nav-link active" href="/admin/dashboard"><i className="fa fa-bar-chart"></i> Dashboards</a></li>
                         <li className="nav-item"><a className="nav-link active" href="/admin/manage"><i className="fa fa-cog"></i> Manage</a></li>
@@ -43,7 +32,7 @@ function NavBar(){
                         </button>
                         </li>
                     </ul>
-                ) : user.type == 'Owner' ? (
+                ) : localStorage.getItem('role') == 'Owner' ? (
                     (
                     <ul className="navbar-nav align-items-center gap-4">
                         <li className="nav-item"><a className="nav-link active" href="#"><i className="fa fa-house"></i> Home</a></li>
@@ -68,7 +57,7 @@ function NavBar(){
                         </li>
                     </ul>
                 )
-                ) : user.type == 'Admin' ? (
+                ) : localStorage.getItem('role') == 'Admin' ? (
                     <ul className="navbar-nav align-items-center gap-4">
                         <li className="nav-item"><a className="nav-link active" href="#"><i className="fa fa-house"></i> Home</a></li>
                         <li className="nav-item"><a className="nav-link" href="#"><i className="fa fa-user-plus"></i> Visitor</a></li>

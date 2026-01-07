@@ -34,9 +34,9 @@ def userloginregistration():
             isValid = getUser.validateUser(request.args.get("username"),request.args.get("password"))
             print(isValid)
             logData = Logs(connection)
-            if isValid:
-                logData.createLog(isValid,-1,'','User Logged in','LoggedIn')
-            return str(isValid)
+            if 'id' in isValid and isValid['id']:
+                logData.createLog(isValid['id'],-1,'','User Logged in','LoggedIn')
+            return (isValid)
     elif(request.method == 'POST'):
         getUser = User(connection)
         register_user = getUser.registerUser(request.form.get('username'),request.form.get('password'),request.form.get('flat'),request.form.get('email'),request.form.get('phone'),request.form.get('apartment')) 
@@ -84,7 +84,15 @@ def delete_event(event_id,user_id):
          return user_events
     else:
         return 'Failed!'
-   
+
+@app.route('/admin/apartments')
+def apartments():
+    if request.method == 'GET':
+        with connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("select * from management.apt;")
+            apts = cur.fetchall()
+        return apts
+
 @app.route('/view_session')
 def view_session():
     return dict(session)
