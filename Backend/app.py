@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session,js
 from flask_sqlalchemy import SQLAlchemy
 import os,time,psycopg2.extras,re
 from flask_cors import CORS
-from Services.Users import User,Logs
+from Services.Users import User,Logs,Flats
 from Services.Features import Event
 
 app = Flask(__name__)
@@ -39,8 +39,12 @@ def userloginregistration():
             return (isValid)
     elif(request.method == 'POST'):
         getUser = User(connection)
-        register_user = getUser.registerUser(request.form.get('username'),request.form.get('password'),request.form.get('flat'),request.form.get('email'),request.form.get('phone'),request.form.get('apartment')) 
-        return register_user
+        if (request.form.get('role') == 'Owner'):
+            register_user = getUser.registerUser(request.form.get('username'),request.form.get('password'),request.form.get('flat'),request.form.get('email'),request.form.get('phone'),request.form.get('role'),request.form.get('apartment')) 
+            return register_user
+        elif(request.form.get('role') == 'Security'):
+            register_user = getUser.registerUser(request.form.get('username'),'','',request.form.get('email'),request.form.get('phone'),request.form.get('role'),request.form.get('apartment')) 
+            return register_user
     else:
         return "Not a valid request method."
 
@@ -85,13 +89,24 @@ def delete_event(event_id,user_id):
     else:
         return 'Failed!'
 
-@app.route('/admin/apartments')
+@app.route('/admin/apartments',methods=["GET","POST","PATCH"])
 def apartments():
     if request.method == 'GET':
-        with connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
-            cur.execute("select * from management.apt;")
-            apts = cur.fetchall()
-        return apts
+        objtype = request.args.get('obj')
+        if(objtype == 'apt'):
+            aptObj =  Flats(connection)
+            apts = aptObj.getApts()
+            return apts
+        elif(objtype == 'flat'):
+            apt_id = request.args.get('apt_id')
+            flatsObj =  Flats(connection)
+            flats = flatsObj.getFlats(apt_id)
+            return flats
+    if request.method == 'POST':
+        createObj =  Flats(connection)
+        
+        createApt = createObj.createAptFlats(request.form.get('name'),request.form.get('location'),request.form.get('flats'))
+        return createApt
 
 @app.route('/view_session')
 def view_session():

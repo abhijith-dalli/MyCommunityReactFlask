@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import NavBar from "../Common/Navbar";
 
+function ErrorAck(props){
+  return (<small id={props.id} className="text-danger">{props.message}</small>);
+}
 
 function AdminManagement() {
   const [activeTab, setActiveTab] = useState("user");
@@ -13,22 +16,30 @@ function AdminManagement() {
     email: "",
     phone: "",
     role: "Security",
+    apartment_id: "-1"
+  });
+  
+  const [errors, setErrors] = useState({
+    username: "",
+    email: "",
+    phone: "",
     apartment_id: ""
   });
 
-  const [apartment, setApartment] = useState({
+  const [apt, setapt] = useState({
     name: "",
     location: "",
     totalFlats: "",
     flats: []
   });
-
-  useEffect(() => {
-    fetch("http://localhost:4000/admin/apartments")
+  const [duplicateFlatsMsg , setMsg] = useState("")
+  function getApartmentListings(){
+    fetch("http://localhost:4000/admin/apartments?obj=apt")
       .then(res => res.json())
       .then(data => setApartments(data))
       .catch(() => setApartments([]));
-  }, []);
+  }
+  useEffect(() => getApartmentListings, []);
 
   function handleUserChange(e) {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -36,7 +47,42 @@ function AdminManagement() {
 
   function submitUser(e) {
     e.preventDefault();
-    console.log("USER:", user);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    var error_struct = {}
+    var validate = true
+    for(let i in user){
+      if(i == 'email' && !emailRegex.test(user[i])){
+        error_struct[i] = "Enter a valid email address";
+        validate = false;
+      }
+      else if(i == 'apartment_id' && user[i] == -1){
+        error_struct[i] = 'Please choose an option.'
+        validate = false;
+      }
+      else if(user[i] == ''){
+        error_struct[i] = 'This field is required.'
+        validate = false;
+      }
+    }
+    setErrors(values => (error_struct))
+    if(validate === true) {
+      const json_data = new FormData(e.target)
+      fetch("http://localhost:4000/User",{
+        method: "POST",
+        body: json_data
+      })
+      .then(res => res.text())
+      .then(data => {
+        alert(data);
+        setUser({
+          username: "",
+          email: "",
+          phone: "",
+          role: "Security",
+          apartment_id: "-1"
+        })
+      })
+    }
   }
 
   function handleApartmentChange(e) {
@@ -45,25 +91,49 @@ function AdminManagement() {
     if (name === "totalFlats") {
       const count = Number(value) || 0;
 
-      setApartment(prev => ({
+      setapt(prev => ({
         ...prev,
         totalFlats: value,
         flats: Array.from({ length: count }, (_, i) => prev.flats[i] || "")
       }));
     } else {
-      setApartment({ ...apartment, [name]: value });
+      setapt({ ...apt, [name]: value });
     }
   }
 
   function handleFlatChange(index, value) {
-    const updated = [...apartment.flats];
+    const updated = [...apt.flats];
     updated[index] = value;
-    setApartment({ ...apartment, flats: updated });
+    setapt({ ...apt, flats: updated });
   }
 
   function submitApartment(e) {
     e.preventDefault();
-    console.log("APARTMENT:", apartment);
+    const allFlats = apt.flats;
+    let duplicateFlats = allFlats.filter((value, index) => 
+    allFlats.indexOf(value) !== index && allFlats.lastIndexOf(value) === index);
+    alert(duplicateFlats);
+    if(duplicateFlats.length == 0){
+      const json_data = new FormData(e.target)
+      fetch("http://localhost:4000/admin/apartments",{
+        method: "POST",
+        body: json_data
+      })
+      .then(res => res.text())
+      .then(data => {
+        alert(data);
+        setapt({
+          name: "",
+          location: "",
+          totalFlats: "",
+          flats: []
+        })
+        getApartmentListings()
+      })
+    }
+    else{
+      setMsg('Flat No: '+duplicateFlats+' cannot be duplicate');
+    }
   }
 
   return (
@@ -106,19 +176,20 @@ function AdminManagement() {
                         name="username"
                         value={user.username}
                         onChange={handleUserChange}
-                        required
                     />
+                    {errors.username && <ErrorAck id="usernameError" message={errors.username}/>}
                     </div>
 
                     <div className="col-md-6">
                     <label className="form-label">Email</label>
                     <input
-                        type="email"
+                        type="text"
                         className="form-control admin-input"
                         name="email"
                         value={user.email}
                         onChange={handleUserChange}
                     />
+                    {errors.email && <ErrorAck id="emailError" message={errors.email}/>}
                     </div>
 
                     <div className="col-md-6">
@@ -129,6 +200,7 @@ function AdminManagement() {
                         value={user.phone}
                         onChange={handleUserChange}
                     />
+                    {errors.phone && <ErrorAck id="phoneError" message={errors.phone}/>}
                     </div>
 
                     <div className="col-md-6">
@@ -137,7 +209,7 @@ function AdminManagement() {
                         className="form-control admin-input"
                         name="role"
                         value={user.role}
-                        disabled
+                        readOnly
                     />
                     </div>
 
@@ -148,15 +220,15 @@ function AdminManagement() {
                         name="apartment_id"
                         value={user.apartment_id}
                         onChange={handleUserChange}
-                        required
                     >
-                        <option value="">Select Apartment</option>
+                        <option value="-1">Select Apartment</option>
                         {apartments.map(a => (
                         <option key={a.id} value={a.id}>
                             {a.name} {"("+a.loc+")"}
                         </option>
                         ))}
                     </select>
+                    {errors.apartment_id && <ErrorAck id="apartment_idError" message={errors.apartment_id}/>}
                     </div>
 
                     <div className="col-12 text-end">
@@ -184,7 +256,7 @@ function AdminManagement() {
                     <input
                         className="form-control admin-input"
                         name="name"
-                        value={apartment.name}
+                        value={apt.name}
                         onChange={handleApartmentChange}
                         required
                     />
@@ -195,8 +267,9 @@ function AdminManagement() {
                     <input
                         className="form-control admin-input"
                         name="location"
-                        value={apartment.location}
+                        value={apt.location}
                         onChange={handleApartmentChange}
+                        required
                     />
                     </div>
 
@@ -206,27 +279,31 @@ function AdminManagement() {
                         type="number"
                         className="form-control admin-input"
                         name="totalFlats"
-                        value={apartment.totalFlats}
+                        value={apt.totalFlats}
                         onChange={handleApartmentChange}
+                        required
                     />
                     </div>
 
-                    {apartment.flats.length > 0 && (
+                    {apt.flats.length > 0 && (
                     <div className="fade-slide">
                         <label className="form-label fw-semibold">Flat Numbers</label>
 
                         <div className="row g-2">
-                        {apartment.flats.map((flat, i) => (
+                        {apt.flats.map((flat, i) => (
                             <div className="col-md-3" key={i}>
                             <input
                                 className="form-control admin-input"
                                 placeholder={`Flat ${i + 1}`}
                                 value={flat}
                                 onChange={e => handleFlatChange(i, e.target.value)}
+                                required
                             />
                             </div>
                         ))}
+                        <input type="hidden" name='flats' id='flats' value={apt.flats}/>
                         </div>
+                        {duplicateFlatsMsg && duplicateFlatsMsg != '' && <ErrorAck id="duplicateFlatsMsgError" message={duplicateFlatsMsg}/>}
                     </div>
                     )}
 

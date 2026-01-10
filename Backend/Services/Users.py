@@ -23,7 +23,7 @@ class User():
             cur.execute("SELECT * FROM management.users where id=%s",(user_id,))
             userDetails = cur.fetchone()
         return userDetails
-    def registerUser(self,username,password,flat,email,phone,apartment):
+    def registerUser(self,username,password,flat,email,phone,type,apartment):
         with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
             cur.execute("SELECT username FROM management.users where username=%s",(username,))
             existingusername = cur.fetchone()
@@ -35,11 +35,18 @@ class User():
             try:
                 with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
                     cur.execute(""" 
-                                INSERT INTO management.users (username, password, email, phone, type , flat, apt_id)
-                                VALUES (%s,%s,%s,%s,%s,%s,%s)
+                                INSERT INTO management.users (username, password, email, phone, type , apt_id)
+                                VALUES (%s,%s,%s,%s,%s,%s)
                                 returning id,username;
-                                """,(username,password,email,phone,'Owner',flat,apartment))
-                    username = cur.fetchone()['username']
+                                """,(username,password,email,phone,type,apartment))
+                    userdetails = cur.fetchone()
+                    username = userdetails['username']
+                    user_id = userdetails['id']
+                    if (type == 'Owner'):
+                        cur.execute(""" 
+                        INSERT INTO management.flat_user_map (flat_id , user_id)
+                        VALUES (%s,%s);
+                        """,(flat,user_id))
                 self.connection.commit()
                 print('Details ',username)
             except (ValueError, TypeError) as e:
@@ -61,3 +68,36 @@ class Logs():
             self.connection.commit()
         except (ValueError, TypeError) as e:
             print("Error: ",e)
+
+class Flats():
+
+    def __init__(self,connection):
+        self.connection = connection
+    def getApts(self):
+        with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("select * from management.apt;")
+            apts = cur.fetchall()
+        return apts
+    def getFlats(self,apt_id):
+        with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("select * from management.flats where apt_id = %s;",(apt_id,))
+            flats = cur.fetchall()
+        return flats
+    def createAptFlats(self,aptName,loc,flats):
+        try:
+            with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
+                cur.execute("""Insert into management.apt 
+                            (name,loc) 
+                            values (%s,%s)
+                            returning id,name,loc;""",(aptName,loc))
+                aptInfo = cur.fetchone()
+                aptFlats =list(map(str, flats.split(",")))
+                for flat in aptFlats:
+                    cur.execute("""Insert into management.flats 
+                                (name,apt_id) 
+                                values (%s,%s) 
+                                returning id;""",(flat,aptInfo["id"]))
+            self.connection.commit()
+            return aptInfo
+        except (ValueError, TypeError) as e:
+            return ("Error: ",e)

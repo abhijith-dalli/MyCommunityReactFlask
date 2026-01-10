@@ -8,7 +8,7 @@ function ErrorAck(props){
 
 function Register() {
   const [register, setRegister] = useState({
-    flat : '',
+    flat : -1,
     username : '',
     apartment : -1,
     phone : '',
@@ -16,7 +16,8 @@ function Register() {
     password : '',
     confirmpassword: ''
   });
-
+  const [aptOpt, setAptOpt] = useState([])
+  const [flatOpt, setFlatOpt] = useState([])
   const [errors, setErrors] = useState({
     flat : '',
     username : '',
@@ -27,10 +28,36 @@ function Register() {
     confirmpassword: ''
   });
 
+  // To get the apartment listings
+  useEffect(() => {
+    fetch("http://localhost:4000/admin/apartments?obj=apt")
+      .then(res => res.json())
+      .then(data => setAptOpt(data))
+      .catch(() => setAptOpt([]));
+  }, []);
+
   function handleChange(e) {
     const name = e.target.name;
     const value = e.target.value;
     setRegister(values => ({...values, [name]: value}))
+    if(name === 'apartment'){
+      fetch("http://localhost:4000/admin/apartments?apt_id="+value+'&obj=flat')
+        .then(res => res.json())
+        .then(data => {
+          setFlatOpt(data)
+          setRegister(value => ({
+            ...value,
+            flat: -1
+          }));
+        })
+        .catch(() => {
+          setFlatOpt([])
+          setRegister(value => ({
+            ...value,
+            flat: -1
+          }));
+        });
+    }
   }
   const navigate = useNavigate();
 
@@ -39,10 +66,14 @@ function Register() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     var error_struct = {}
-    var validate = false
+    var validate = true
     for(let i in register){
       if(i == 'apartment' && register[i] == -1){
         error_struct[i] = 'You must select an option.'
+        validate = false;
+      }
+      else if(i == 'flat' && register[i] == -1){
+        error_struct[i] = 'You must select an option based on the apartment.'
         validate = false;
       }
       else{
@@ -62,9 +93,6 @@ function Register() {
         else if(register[i] == ''){
           error_struct[i] = 'This field is required.'
           validate = false;
-        }
-        else{
-          validate = true;
         }
       }
     }
@@ -99,10 +127,33 @@ function Register() {
         <div className="col-md-7 register-right">
           <h3 className="register-title">Registration Form</h3>
           <form onSubmit={handleRegister} method="post">
+            <input  type='hidden' id ='role' name="role" value='Owner'/>
+            <div className="mb-3">
+              <div className="input-group">
+                <span className="input-group-text"><i className="fa fa-building"></i></span>
+                <select className="form-select" id="apartment" name='apartment' value={register.apartment} onChange={handleChange} >
+                  <option value="-1">Choose your apartment</option>
+                  {aptOpt.map(a => (
+                    <option key={a.id} value={a.id}>
+                        {a.name} {"("+a.loc+")"}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {errors.apartment && <ErrorAck id="apartmenterror" message={errors.apartment}/>}
+            </div>
             <div className="mb-3">
               <div className="input-group">
                 <span className="input-group-text"><i className="fa fa-door-closed"></i></span>
-                <input type="text" id="flat" name='flat' value={register.flat} onChange={handleChange} className="form-control" placeholder="Flat No"/>
+                {/* <input type="text" id="flat" name='flat' value={register.flat} onChange={handleChange} className="form-control" placeholder="Flat No"/> */}
+                <select className="form-select" id="flat" name='flat' value={register.flat} onChange={handleChange} >
+                  <option value="-1">Choose your flat</option>
+                  {flatOpt.map(flat => (
+                    <option key={flat.id} value={flat.id}>
+                        {flat.name}
+                    </option>
+                  ))}
+                </select>
               </div>
               {errors.flat && <ErrorAck id="flaterror" message={errors.flat}/>}
             </div>
@@ -112,15 +163,6 @@ function Register() {
                 <input type="text" name='username' value={register.username} onChange={handleChange}  id="username" className="form-control" placeholder="Username"/>
               </div>
               {errors.username && <ErrorAck id="usernameerror" message={errors.username}/>}
-            </div>
-
-            <div className="mb-3">
-              <select className="form-select" id="apartment" name='apartment' value={register.apartment} onChange={handleChange} >
-                <option value="-1">Choose your apartment</option>
-                <option value="1">Apartment X</option>
-                <option value="2">Apartment Y</option>
-              </select>
-              {errors.apartment && <ErrorAck id="apartmenterror" message={errors.apartment}/>}
             </div>
 
             <div className="mb-3">
