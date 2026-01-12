@@ -53,6 +53,42 @@ class User():
                 print("Error: ",e)
             return f'Registration successful for user {username}.'
 
+    def getAllUsers(self):
+        with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+            SELECT u.id as id,
+                u.username as username,
+                u.email as email,
+                u.phone as phone,
+                u.type as role,
+                u.status as status,
+                u.apt_id as apt_id,
+                a.name as apartment,
+                f.id as f_id,
+                f.name as flat
+            FROM management.users u 
+            left join management.apt a on a.id = u.apt_id
+            left join management.flat_user_map fu on fu.user_id = u.id
+            left join management.flats f on f.id = fu.flat_id 
+            order by u.id desc""")
+            allUsers = cur.fetchall()
+            return allUsers
+
+    def updateUserDetails(self,user_id,username, email, phone, status):
+        try:
+            with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
+                cur.execute("""UPDATE management.users 
+                                    SET username=%s,
+                                        email=%s,
+                                        phone=%s,
+                                        status=%s
+                                    WHERE id=%s;""", (username,email,phone,status,user_id))
+            self.connection.commit()
+            return 'Updated'
+        except Exception as e:
+            print("ERROR::",e)
+
+
 class Logs():
 
     def __init__(self,connection):
@@ -75,7 +111,24 @@ class Flats():
         self.connection = connection
     def getApts(self):
         with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
-            cur.execute("select * from management.apt;")
+            cur.execute("""SELECT 
+                            a.id as id,
+                            a.name as name,
+                            a.loc as loc,
+                            a.status as status,
+                            json_agg(
+								json_build_object(
+									'id', f.id,
+									'name', f.name
+								)
+								ORDER BY f.name asc
+								) AS flats
+                        FROM management.apt a
+                        LEFT JOIN management.flats f 
+                            ON a.id = f.apt_id
+                        GROUP BY 
+                            a.id, a.name, a.loc
+                        order by a.id desc;""")
             apts = cur.fetchall()
         return apts
     def getFlats(self,apt_id):
@@ -101,3 +154,16 @@ class Flats():
             return aptInfo
         except (ValueError, TypeError) as e:
             return ("Error: ",e)
+        
+    def updateApts(self,id,name,loc,status):
+        try:
+            with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
+                cur.execute("""UPDATE management.apt 
+                                    SET name=%s,
+                                        loc=%s,
+                                        status=%s
+                                    WHERE id=%s;""", (name,loc,status,id))
+            self.connection.commit()
+            return 'Updated'
+        except Exception as e:
+            print("ERROR::",e)

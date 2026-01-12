@@ -15,7 +15,7 @@ function AdminManagement() {
     username: "",
     email: "",
     phone: "",
-    role: "Security",
+    role: "Admin",
     apartment_id: "-1"
   });
   
@@ -73,12 +73,11 @@ function AdminManagement() {
       })
       .then(res => res.text())
       .then(data => {
-        alert(data);
         setUser({
           username: "",
           email: "",
           phone: "",
-          role: "Security",
+          role: "Admin",
           apartment_id: "-1"
         })
       })
@@ -112,7 +111,6 @@ function AdminManagement() {
     const allFlats = apt.flats;
     let duplicateFlats = allFlats.filter((value, index) => 
     allFlats.indexOf(value) !== index && allFlats.lastIndexOf(value) === index);
-    alert(duplicateFlats);
     if(duplicateFlats.length == 0){
       const json_data = new FormData(e.target)
       fetch("http://localhost:4000/admin/apartments",{
@@ -121,7 +119,7 @@ function AdminManagement() {
       })
       .then(res => res.text())
       .then(data => {
-        alert(data);
+        console.log(data);
         setapt({
           name: "",
           location: "",

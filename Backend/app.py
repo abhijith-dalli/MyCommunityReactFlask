@@ -14,7 +14,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Abhijith12345@loc
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 connection = psycopg2.connect(host="localhost",database="postgres",user="postgres",password="Abhijith12345",port="5432")
-
+logData = Logs(connection)
+getUser = User(connection)
+apt =  Flats(connection)
 upload_path = "uploads"
 os.makedirs(upload_path, exist_ok=True)
 
@@ -22,29 +24,35 @@ os.makedirs(upload_path, exist_ok=True)
 def root():
     return "Please pass some path to get response / This route does'nt exists"
 
-@app.route("/User", methods=["GET","POST"])
+@app.route("/User", methods=["GET","POST","PATCH"])
 def userloginregistration():
     if(request.method == 'GET'):
-        if ('user_id' in request.args):
-            getUser = User(connection)
+        if ('user_id' in request.args):      
             details = getUser.getUserByID(request.args.get("user_id"))
             return details
         elif ('username' in request.args and 'password' in request.args):
-            getUser = User(connection)
             isValid = getUser.validateUser(request.args.get("username"),request.args.get("password"))
             print(isValid)
-            logData = Logs(connection)
             if 'id' in isValid and isValid['id']:
-                logData.createLog(isValid['id'],-1,'','User Logged in','LoggedIn')
+                logData.createLog(isValid['id'],isValid['id'],'users','User Logged in','GET')
             return (isValid)
+        else:
+            getUsers = getUser.getAllUsers()
+            return getUsers
     elif(request.method == 'POST'):
-        getUser = User(connection)
         if (request.form.get('role') == 'Owner'):
             register_user = getUser.registerUser(request.form.get('username'),request.form.get('password'),request.form.get('flat'),request.form.get('email'),request.form.get('phone'),request.form.get('role'),request.form.get('apartment')) 
+            logData.createLog(-1,-1,'users','User Owner Registered','INSERT')
             return register_user
         elif(request.form.get('role') == 'Security'):
             register_user = getUser.registerUser(request.form.get('username'),'','',request.form.get('email'),request.form.get('phone'),request.form.get('role'),request.form.get('apartment')) 
+            logData.createLog(-1,-1,'users','User Admin Registered','INSERT')
             return register_user
+    elif (request.method == 'PATCH'):
+        update = getUser.updateUserDetails(request.form.get('user_id'),request.form.get('username'), request.form.get('email'),request.form.get('phone'),request.form.get('status'))
+        if update == 'Updated':
+            logData.createLog(1,request.form.get('user_id'),'users','User Updated','UPDATE')
+        return update
     else:
         return "Not a valid request method."
 
@@ -94,19 +102,21 @@ def apartments():
     if request.method == 'GET':
         objtype = request.args.get('obj')
         if(objtype == 'apt'):
-            aptObj =  Flats(connection)
-            apts = aptObj.getApts()
+            apts = apt.getApts()
             return apts
         elif(objtype == 'flat'):
             apt_id = request.args.get('apt_id')
-            flatsObj =  Flats(connection)
-            flats = flatsObj.getFlats(apt_id)
+            flats = apt.getFlats(apt_id)
             return flats
     if request.method == 'POST':
-        createObj =  Flats(connection)
-        
-        createApt = createObj.createAptFlats(request.form.get('name'),request.form.get('location'),request.form.get('flats'))
+        createApt = apt.createAptFlats(request.form.get('name'),request.form.get('location'),request.form.get('flats'))
         return createApt
+    if request.method == 'PATCH':
+        update =  apt.updateApts(request.form.get('apt_id'),request.form.get('aname'),request.form.get('loc'),request.form.get('status'))
+        if update == 'Updated':
+            logData.createLog(1,request.form.get('apt_id'),'apt','Apartment Updated','UPDATE')
+        return update
+
 
 @app.route('/view_session')
 def view_session():

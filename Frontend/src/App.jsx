@@ -5,6 +5,7 @@ import Home from "./components/Pages/Home";
 import ProtectedRoute from "./components/Common/ProtectedRoute";
 import Event from "./components/Pages/addEvents";
 import AdminManagement from "./components/Admin/AdminManagement";
+import AdminManageData from "./components/Admin/ManageData";
 import AdminDashboard from "./components/Admin/AdminDashboard";
 
 function AdminRoute({children}){
@@ -45,6 +46,10 @@ function App() {
         <Route path="/admin/dashboard" element={
           <AdminRoute>
             <AdminDashboard />
+          </AdminRoute>} />
+        <Route path="/admin/edit" element={
+          <AdminRoute>
+            <AdminManageData />
           </AdminRoute>} />
       </Routes>
     </BrowserRouter>

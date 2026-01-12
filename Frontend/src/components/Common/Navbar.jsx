@@ -25,7 +25,7 @@ function NavBar(){
                         <li className="nav-item"><a className="nav-link active" href="/admin/dashboard"><i className="fa fa-bar-chart"></i> Dashboards</a></li>
                         <li className="nav-item"><a className="nav-link active" href="/admin/manage"><i className="fa fa-cog"></i> Manage</a></li>
                         <li className="nav-item"><a className="nav-link active" href="/admin/issues"><i className="fa fa-list"></i> Issues</a></li>
-                        <li className="nav-item"><a className="nav-link active" href="/admin/logs"><i className="fa fa-history"></i> Audit logs</a></li>
+                        <li className="nav-item"><a className="nav-link active" href="/admin/edit"><i className="fa fa-pen-to-square"></i> Edit</a></li>
                         <li className="nav-item">
                         <button onClick={logout} className="btn btn-outline-light px-4">
                             <i className="fa fa-right-from-bracket"></i> Logout
