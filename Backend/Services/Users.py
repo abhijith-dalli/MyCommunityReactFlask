@@ -53,9 +53,9 @@ class User():
                 print("Error: ",e)
             return f'Registration successful for user {username}.'
 
-    def getAllUsers(self):
+    def getUsers(self,filters = ''):
         with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
-            cur.execute("""
+            query = """
             SELECT u.id as id,
                 u.username as username,
                 u.email as email,
@@ -70,20 +70,54 @@ class User():
             left join management.apt a on a.id = u.apt_id
             left join management.flat_user_map fu on fu.user_id = u.id
             left join management.flats f on f.id = fu.flat_id 
-            order by u.id desc""")
+            """
+            params = []
+            if(filters != ''):
+                filter = filters.to_dict()
+                query += 'where 1=1 '
+                if filter.get('user_id') and filter.get('user_id') != -1:
+                    query += 'and u.id = %s '
+                    params.append(filter.get('user_id'))
+                if filter.get('username') and filter.get('username') != '':
+                    query += 'and u.username = %s '
+                    params.append(filter.get('username'))
+                if filter.get('phone') and filter.get('phone') != '':
+                    query += 'and u.phone = %s '
+                    params.append(filter.get('phone'))
+            
+            query += 'order by u.id desc '
+            cur.execute(query, params)
             allUsers = cur.fetchall()
             return allUsers
 
-    def updateUserDetails(self,user_id,username, email, phone, status):
+    def updateUserDetails(self,filters = ''):
         try:
-            with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
-                cur.execute("""UPDATE management.users 
-                                    SET username=%s,
-                                        email=%s,
-                                        phone=%s,
-                                        status=%s
-                                    WHERE id=%s;""", (username,email,phone,status,user_id))
-            self.connection.commit()
+            if(filters != ''):
+                filter = filters.to_dict()
+                with self.connection.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
+                    fields = []
+                    params = []
+                    if filter.get("username"):
+                        fields.append("username = %s")
+                        params.append(filter.get("username"))
+                    if filter.get("email"):
+                        fields.append("email = %s")
+                        params.append(filter.get("email"))
+                    if filter.get("phone"):
+                        fields.append("phone = %s")
+                        params.append(filter.get("phone"))
+                    if filter.get("status"):
+                        fields.append("status = %s")
+                        params.append(filter.get("status"))
+                    if filter.get("password"):
+                        fields.append("password = %s")
+                        params.append(filter.get("password"))
+                    params.append(filter.get("user_id"))
+                    query = f"""UPDATE management.users 
+                                    SET {", ".join(fields)}
+                                    WHERE id = %s;"""
+                    cur.execute(query, params)
+                self.connection.commit()
             return 'Updated'
         except Exception as e:
             print("ERROR::",e)

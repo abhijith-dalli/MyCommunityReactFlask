@@ -51,22 +51,27 @@ function Login() {
                   </div>
               </div>
 
-              <div className="mb-3">
+              <div className="mb-1">
                   <label className="form-label">Password</label>
                   <div className="input-group">
                       <span className="input-group-text"><i className="bi bi-lock"></i></span>
                       <input type="password" name="password" value={password} onChange={(e)=>setPassword(e.target.value)} className="form-control" required />
                   </div>
               </div>
-
+              <div className="text-end mb-3">
+                <small>
+                  <Link to="/reset">Forgot Password?</Link>
+                </small>
+              </div>
               <button className="btn btn-primary w-100" type="submit">Login</button>
           </form>
 
           <div className="text-center mt-3">
-              <small>
-                  Don't have an account? 
-                  <Link to="/register">Register</Link>
-              </small>
+            
+            <small>
+                Don't have an account? 
+                <Link to="/register">Register</Link>
+            </small>
           </div>
       </div>
     </div>

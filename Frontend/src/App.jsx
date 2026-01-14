@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./components/Common/Login";
+import Reset from "./components/Common/ResetPassword";
 import Register from "./components/Common/Register";
 import Home from "./components/Pages/Home";
 import ProtectedRoute from "./components/Common/ProtectedRoute";
@@ -23,6 +24,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/reset" element={<Reset />} />
         <Route
           path="/home"
           element={

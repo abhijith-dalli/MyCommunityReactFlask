@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os,time,psycopg2.extras,re
 from flask_cors import CORS
 from Services.Users import User,Logs,Flats
-from Services.Features import Event
+from Services.Features import Event,Message
 
 app = Flask(__name__)
 CORS(app)
@@ -27,17 +27,14 @@ def root():
 @app.route("/User", methods=["GET","POST","PATCH"])
 def userloginregistration():
     if(request.method == 'GET'):
-        if ('user_id' in request.args):      
-            details = getUser.getUserByID(request.args.get("user_id"))
-            return details
-        elif ('username' in request.args and 'password' in request.args):
+        if ('username' in request.args and 'password' in request.args):
             isValid = getUser.validateUser(request.args.get("username"),request.args.get("password"))
             print(isValid)
             if 'id' in isValid and isValid['id']:
                 logData.createLog(isValid['id'],isValid['id'],'users','User Logged in','GET')
             return (isValid)
         else:
-            getUsers = getUser.getAllUsers()
+            getUsers = getUser.getUsers(request.args)
             return getUsers
     elif(request.method == 'POST'):
         if (request.form.get('role') == 'Owner'):
@@ -49,7 +46,7 @@ def userloginregistration():
             logData.createLog(-1,-1,'users','User Admin Registered','INSERT')
             return register_user
     elif (request.method == 'PATCH'):
-        update = getUser.updateUserDetails(request.form.get('user_id'),request.form.get('username'), request.form.get('email'),request.form.get('phone'),request.form.get('status'))
+        update = getUser.updateUserDetails(request.form)
         if update == 'Updated':
             logData.createLog(1,request.form.get('user_id'),'users','User Updated','UPDATE')
         return update
@@ -120,7 +117,9 @@ def apartments():
 
 @app.route('/view_session')
 def view_session():
-    return dict(session)
+    send = Message()
+    value = send.sendMsg()
+    return value
 
 if __name__ == '__main__':
     app.run(host='localhost', port=4000, debug=True)

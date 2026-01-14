@@ -1,5 +1,6 @@
 import psycopg2.extras
 from Services.Users import Logs 
+from twilio.rest import Client
 
 class Event():
     def __init__(self,connection,user_id):
@@ -72,3 +73,19 @@ class Event():
         except (ValueError, TypeError) as e:
             print("Error: ",e)
             return False
+        
+class Message():
+    def __init__(self,body):
+        self.account_sid = 'AC5aee404c6ab52626df9f5410e1e60d31'
+        self.auth_token = 'ebeb3e9f898be3b3bc5669341c6d2973'
+        self.body = body
+    def sendMsg(self):
+        client = Client(self.account_sid, self.auth_token)
+        message = client.messages.create(
+        from_='whatsapp:+14155238886',
+        body=(
+            "Message of the body"
+        ),
+        to='whatsapp:+917680998356'
+        )
+        return message.sid
